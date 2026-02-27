@@ -138,6 +138,10 @@ watch([isConnected, address], ([connected, addr]) => {
   min-height: 100%;
   gap: 1.5rem;
   padding: 2rem;
+
+  > * {
+    width: 100%;
+  }
 }
 
 .siwe-status {

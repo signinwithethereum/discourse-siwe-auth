@@ -1,8 +1,27 @@
-.siwe-mount {
-  background-color: var(--secondary);
-  // background-color: red;
+.siwe-login-page {
+  .d-header {
+    background-color: var(--secondary);
+    box-shadow: none;
+    .wrap {
+      width: auto;
+    }
+  }
+
+  .discourse-root {
+    min-height: 100dvh;
+  }
+
+  .main-outlet-wrapper {
+    height: calc(100dvh - var(--header-offset));
+  }
+
+  .powered-by-discourse {
+    display: none;
+  }
 }
 
-* {
-  border: 2px solid pink;
+.siwe-mount {
+  background-color: var(--secondary);
+  max-width: 24rem;
+  margin-inline: auto;
 }
