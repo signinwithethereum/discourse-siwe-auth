@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 # name: discourse-siwe
-# about: A discourse plugin to enable users to authenticate via Sign In with Ethereum
+# about: Authenticate users via the Sign In with Ethereum (SIWE) standard
 # version: 0.1.2
+# authors: EthID
+# url: https://siwe.xyz
 
 enabled_site_setting :discourse_siwe_enabled
 register_svg_icon 'fab-ethereum'

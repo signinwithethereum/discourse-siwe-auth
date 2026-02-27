@@ -1,4 +1,4 @@
-plugins:
+discourse_siwe:
   discourse_siwe_enabled:
     default: true
   siwe_project_id:

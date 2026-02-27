@@ -1,6 +1,11 @@
 en:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          discourse_siwe: "Sign In With Ethereum"
   site_settings:
-    discourse_siwe_enabled: "Either the plugin is enabled or not"
+    discourse_siwe_enabled: "Enable Sign In With Ethereum authentication"
     siwe_project_id: "Project ID for Web3Modal"
     siwe_statement: "Statement that will be displayed in the message"
     placeholder:
