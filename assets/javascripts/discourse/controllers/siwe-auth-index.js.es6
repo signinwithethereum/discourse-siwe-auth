@@ -22,7 +22,7 @@ export default Controller.extend({
         .querySelector('meta[name="csrf-token"]')
         ?.getAttribute('content') || ''
 
-    await loadScript('/plugins/discourse-siwe/javascripts/siwe.iife.js')
+    await loadScript('/plugins/discourse-siwe-auth/javascripts/siwe.iife.js')
 
     if (window.mountSiwe) {
       window.mountSiwe('#siwe-mount', {
