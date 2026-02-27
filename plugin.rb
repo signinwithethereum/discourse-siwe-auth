@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# name: discourse-siwe
+# name: discourse-siwe-auth
 # about: Authenticate users via the Sign In with Ethereum (SIWE) standard
 # version: 0.1.2
 # authors: EthID
@@ -61,6 +61,6 @@ after_initialize do
   ].each { |path| load File.expand_path(path, __FILE__) }
 
   Discourse::Application.routes.prepend do
-    mount ::DiscourseSiwe::Engine, at: '/discourse-siwe'
+    mount ::DiscourseSiwe::Engine, at: '/discourse-siwe-auth'
   end
 end
