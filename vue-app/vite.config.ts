@@ -44,6 +44,9 @@ function cssToShadow(): Plugin {
 
 export default defineConfig({
   plugins: [vue(), cssToShadow()],
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+  },
   build: {
     lib: {
       entry: 'src/main.ts',
