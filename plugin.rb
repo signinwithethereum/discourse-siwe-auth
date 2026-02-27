@@ -50,6 +50,7 @@ end
 
 auth_provider authenticator: ::SiweAuthenticator.new,
               icon: 'fab-ethereum',
+              title_setting: :siwe_statement,
               full_screen_login: true
 
 after_initialize do
