@@ -61,6 +61,6 @@ after_initialize do
   ].each { |path| load File.expand_path(path, __FILE__) }
 
   Discourse::Application.routes.prepend do
-    mount ::DiscourseSiwe::Engine, at: '/discourse-siwe-auth'
+    mount ::DiscourseSiwe::Engine, at: '/discourse-siwe'
   end
 end
