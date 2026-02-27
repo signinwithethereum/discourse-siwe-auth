@@ -3,7 +3,7 @@ en:
     admin:
       site_settings:
         categories:
-          discourse_siwe: "Sign In With Ethereum"
+          discourse_siwe: "Sign in With Ethereum"
   site_settings:
     placeholder:
       siwe_json_rpc:
@@ -13,8 +13,8 @@ en:
     login:
       siwe:
         name: "SIWE"
-        title: "with Ethereum"
+        title: "Sign in with Ethereum"
     eth_providers:
-      title: "Sign-in with Ethereum"
+      title: "Sign in with Ethereum"
       buttons:
-        start: "Sign-in with Ethereum"
+        start: "Sign in with Ethereum"
