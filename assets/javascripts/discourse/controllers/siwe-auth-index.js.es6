@@ -1,6 +1,6 @@
 import Controller from "@ember/controller";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import Web3Modal from "../lib/web3modal";
+import loadScript from "discourse/lib/load-script";
 
 export default Controller.extend({
   init() {
@@ -8,37 +8,28 @@ export default Controller.extend({
     this.initAuth();
   },
 
-  verifySignature(account, message, signature, avatar) {
-    document.getElementById("eth_account").value = account;
-    document.getElementById("eth_message").value = message;
-    document.getElementById("eth_signature").value = signature;
-    document.getElementById("eth_avatar").value = avatar;
-    document.getElementById("siwe-sign").submit();
-  },
-
   async initAuth() {
-    const env = withPluginApi("0.11.7", (api) => {
+    const settings = withPluginApi("0.11.7", (api) => {
       const siteSettings = api.container.lookup("site-settings:main");
-
       return {
-        PROJECT_ID: siteSettings.siwe_project_id,
-      }
+        projectId: siteSettings.siwe_project_id,
+        statement: siteSettings.siwe_statement,
+      };
     });
-    let provider = Web3Modal.create();
-    await provider.providerInit(env);
-    await provider.runSigningProcess(async (res) => {
-      try {
-        const [account, message, signature, avatar] = res;
-        this.verifySignature(account, message, signature, avatar);
-      } catch (e) {
-        console.error(e);
-      }
-    });
-  },
 
-  actions: {
-    async initAuth() {
-      this.initAuth();
+    const csrfToken =
+      document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "";
+
+    await loadScript("/plugins/discourse-siwe/javascripts/siwe.iife.js");
+
+    if (window.mountSiwe) {
+      window.mountSiwe("#siwe-mount", {
+        csrfToken,
+        callbackUrl: "/auth/siwe/callback",
+        messageUrl: "/discourse-siwe/message",
+        walletConnectProjectId: settings.projectId,
+        statement: settings.statement,
+      });
     }
-  }
+  },
 });

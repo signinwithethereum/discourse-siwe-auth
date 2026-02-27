@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIWE Auth — Dev Harness</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #siwe-mount { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <!-- Hidden form matching Discourse template structure -->
+  <form id="siwe-sign" method="POST" action="/auth/siwe/callback" style="display: none;">
+    <textarea id="eth_account" name="eth_account"></textarea>
+    <textarea id="eth_message" name="eth_message"></textarea>
+    <textarea id="eth_signature" name="eth_signature"></textarea>
+    <textarea id="eth_avatar" name="eth_avatar"></textarea>
+  </form>
+
+  <div id="siwe-mount"></div>
+
+  <script type="module" src="/src/main.ts"></script>
+  <script type="module">
+    // Auto-mount for dev testing
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.mountSiwe) {
+        window.mountSiwe('#siwe-mount', {
+          csrfToken: 'dev-token',
+          callbackUrl: '/auth/siwe/callback',
+          messageUrl: '/discourse-siwe/message',
+          statement: 'Sign-in to Discourse via Ethereum',
+        })
+      }
+    })
+  </script>
+</body>
+</html>
