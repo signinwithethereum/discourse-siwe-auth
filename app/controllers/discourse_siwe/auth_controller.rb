@@ -3,6 +3,9 @@
 require 'siwe'
 module DiscourseSiwe
   class AuthController < ::ApplicationController
+    skip_before_action :check_xhr, only: [:message]
+    skip_before_action :redirect_to_login_if_required, only: [:message]
+
     def index
     end
 
