@@ -24,10 +24,7 @@ export interface SiweOptions {
   statement?: string
 }
 
-export function mountSiwe(
-  el: string | HTMLElement,
-  options: SiweOptions,
-) {
+export function mountSiwe(el: string | HTMLElement, options: SiweOptions) {
   const element = typeof el === 'string' ? document.querySelector(el) : el
   if (!element) throw new Error(`Element not found: ${el}`)
 

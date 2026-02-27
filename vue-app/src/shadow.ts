@@ -90,7 +90,9 @@ export function captureDevStyles(shadow: ShadowRoot): () => void {
   // moved out of <head> by an earlier mount).
   if (devStyleTargets.size > 0) {
     const [existing] = devStyleTargets
-    for (const el of existing.querySelectorAll<HTMLStyleElement>('style[data-vite-dev-id]')) {
+    for (const el of existing.querySelectorAll<HTMLStyleElement>(
+      'style[data-vite-dev-id]',
+    )) {
       shadow.appendChild(el.cloneNode(true))
     }
   }
@@ -98,7 +100,9 @@ export function captureDevStyles(shadow: ShadowRoot): () => void {
   devStyleTargets.add(shadow)
 
   // Move any remaining Vite-injected styles from <head>
-  for (const el of [...document.head.querySelectorAll('style[data-vite-dev-id]')]) {
+  for (const el of [
+    ...document.head.querySelectorAll('style[data-vite-dev-id]'),
+  ]) {
     distributeStyle(el as HTMLStyleElement)
   }
 

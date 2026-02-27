@@ -3,7 +3,7 @@ discourse_siwe:
     default: true
   siwe_project_id:
     client: true
-    default: ""
+    default: ''
   siwe_statement:
     client: true
-    default: "Sign in with Ethereum"
+    default: 'Sign in with Ethereum'

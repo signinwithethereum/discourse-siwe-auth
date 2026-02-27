@@ -1,8 +1,4 @@
-import {
-  http,
-  createConfig,
-  type CreateConnectorFn,
-} from '@wagmi/core'
+import { http, createConfig, type CreateConnectorFn } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
 import { injected, metaMask, safe, walletConnect } from '@wagmi/connectors'
 

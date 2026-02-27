@@ -16,24 +16,33 @@ const errorMessage = ref('')
 const { address, chainId, isConnected } = useAccount()
 const { signMessageAsync } = useSignMessage()
 
-async function fetchSiweMessage(ethAccount: string, chain: number): Promise<string> {
+async function fetchSiweMessage(
+  ethAccount: string,
+  chain: number,
+): Promise<string> {
   const url = new URL(props.messageUrl, window.location.origin)
   url.searchParams.set('eth_account', ethAccount)
   url.searchParams.set('chain_id', String(chain))
 
   const res = await fetch(url.toString(), {
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
       'X-CSRF-Token': props.csrfToken,
     },
   })
-  if (!res.ok) throw new Error(`Failed to fetch SIWE message: ${res.statusText}`)
+  if (!res.ok)
+    throw new Error(`Failed to fetch SIWE message: ${res.statusText}`)
   const { message } = await res.json()
   return message
 }
 
-function submitForm(account: string, message: string, signature: string, avatar: string) {
+function submitForm(
+  account: string,
+  message: string,
+  signature: string,
+  avatar: string,
+) {
   const setField = (id: string, value: string) => {
     const el = document.getElementById(id) as HTMLTextAreaElement | null
     if (el) el.value = value
@@ -65,7 +74,10 @@ async function signIn() {
     status.value = 'error'
     if (err instanceof Error) {
       // User rejected signature
-      if (err.message.includes('User rejected') || err.message.includes('user rejected')) {
+      if (
+        err.message.includes('User rejected') ||
+        err.message.includes('user rejected')
+      ) {
         errorMessage.value = 'Signature rejected. Please try again.'
       } else {
         errorMessage.value = err.message
@@ -77,29 +89,40 @@ async function signIn() {
 }
 
 // Auto-sign when wallet connects
-watch(
-  [isConnected, address],
-  ([connected, addr]) => {
-    if (connected && addr && status.value === 'idle') {
-      signIn()
-    }
-  },
-)
+watch([isConnected, address], ([connected, addr]) => {
+  if (connected && addr && status.value === 'idle') {
+    signIn()
+  }
+})
 </script>
 
 <template>
   <div class="siwe-auth">
-    <div v-if="status === 'signing'" class="siwe-status">
+    <div
+      v-if="status === 'signing'"
+      class="siwe-status"
+    >
       <p>Please sign the message in your wallet...</p>
     </div>
 
-    <div v-else-if="status === 'submitting'" class="siwe-status">
+    <div
+      v-else-if="status === 'submitting'"
+      class="siwe-status"
+    >
       <p>Verifying signature...</p>
     </div>
 
-    <div v-else-if="status === 'error'" class="siwe-error">
+    <div
+      v-else-if="status === 'error'"
+      class="siwe-error"
+    >
       <p>{{ errorMessage }}</p>
-      <button class="siwe-retry-btn" @click="signIn">Try again</button>
+      <button
+        class="siwe-retry-btn"
+        @click="signIn"
+      >
+        Try again
+      </button>
     </div>
 
     <EvmConnect v-if="status !== 'submitting'" />

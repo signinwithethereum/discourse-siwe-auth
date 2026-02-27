@@ -1,21 +1,21 @@
 {{! {{hide-application-header}}
 {{! {{hide-application-sidebar}}
-{{body-class "siwe-login-page"}}
-{{hideApplicationHeaderButtons "search" "login" "signup" "menu"}}
+{{body-class 'siwe-login-page'}}
+{{hideApplicationHeaderButtons 'search' 'login' 'signup' 'menu'}}
 {{hideApplicationSidebar}}
 {{! {{bodyClass "login-page"}}
-{{bodyClass "siwe-login-page"}}
+{{bodyClass 'siwe-login-page'}}
 
 <form
-  id="siwe-sign"
-  method="POST"
-  action="/auth/siwe/callback"
-  style="display: none;"
+  id='siwe-sign'
+  method='POST'
+  action='/auth/siwe/callback'
+  style='display: none;'
 >
-  <textarea id="eth_account" name="eth_account"></textarea>
-  <textarea id="eth_message" name="eth_message"></textarea>
-  <textarea id="eth_signature" name="eth_signature"></textarea>
-  <textarea id="eth_avatar" name="eth_avatar"></textarea>
+  <textarea id='eth_account' name='eth_account'></textarea>
+  <textarea id='eth_message' name='eth_message'></textarea>
+  <textarea id='eth_signature' name='eth_signature'></textarea>
+  <textarea id='eth_avatar' name='eth_avatar'></textarea>
 </form>
 
-<div id="siwe-mount" class="siwe-mount"></div>
+<div id='siwe-mount' class='siwe-mount'></div>

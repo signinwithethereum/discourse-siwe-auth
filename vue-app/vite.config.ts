@@ -34,10 +34,7 @@ function cssToShadow(): Plugin {
       const jsPath = resolve(absOut, jsFile)
       const js = readFileSync(jsPath, 'utf-8')
       // Prepend __siwe_css__ as a global before the IIFE
-      writeFileSync(
-        jsPath,
-        `var __siwe_css__ = ${JSON.stringify(css)};\n` + js,
-      )
+      writeFileSync(jsPath, `var __siwe_css__ = ${JSON.stringify(css)};\n` + js)
     },
   }
 }
