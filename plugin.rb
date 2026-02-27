@@ -8,7 +8,7 @@
 
 enabled_site_setting :discourse_siwe_enabled
 register_svg_icon 'fab-ethereum'
-register_asset 'stylesheets/discourse-siwe.scss'
+register_asset 'stylesheets/discourse-siwe-auth.scss'
 
 %w[
   ../lib/omniauth/strategies/siwe.rb
