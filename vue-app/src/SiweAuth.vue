@@ -22,7 +22,11 @@ async function fetchSiweMessage(ethAccount: string, chain: number): Promise<stri
   url.searchParams.set('chain_id', String(chain))
 
   const res = await fetch(url.toString(), {
-    headers: { 'X-CSRF-Token': props.csrfToken },
+    headers: {
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-CSRF-Token': props.csrfToken,
+    },
   })
   if (!res.ok) throw new Error(`Failed to fetch SIWE message: ${res.statusText}`)
   const { message } = await res.json()
