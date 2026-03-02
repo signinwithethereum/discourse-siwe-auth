@@ -163,7 +163,7 @@ watch([isConnected, address], ([connected, addr]) => {
         class="block"
         @click="signIn"
       >
-        Sign Message
+        Sign in with Ethereum
       </Button>
       <Button
         class="block tertiary"
