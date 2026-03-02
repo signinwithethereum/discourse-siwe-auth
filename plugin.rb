@@ -48,7 +48,7 @@ class ::SiweAuthenticator < ::Auth::ManagedAuthenticator
   end
 
   def description_for_auth_hash(auth_token)
-    auth_token&.provider_uid
+    auth_token&.provider_uid || super
   end
 end
 
