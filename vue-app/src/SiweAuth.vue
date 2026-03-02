@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useConnection, useSignMessage } from '@wagmi/vue'
+import { useConnection, useDisconnect, useSignMessage } from '@wagmi/vue'
 import { EvmConnect } from '@1001-digital/components'
 
 const props = defineProps<{
@@ -15,6 +15,15 @@ const errorMessage = ref('')
 
 const { address, chainId, isConnected, connector } = useConnection()
 const { mutateAsync: signMessageAsync } = useSignMessage()
+const { mutate: disconnect } = useDisconnect()
+
+// Track whether the user actively connected via EvmConnect
+// (as opposed to an auto-reconnect on page load).
+const userInitiated = ref(false)
+
+function onConnected() {
+  userInitiated.value = true
+}
 
 async function fetchSiweMessage(
   ethAccount: string,
@@ -88,9 +97,9 @@ async function signIn() {
   }
 }
 
-// Auto-sign when wallet connects
+// Auto-sign only when the user actively connects (not on page-load reconnect)
 watch([isConnected, address], ([connected, addr]) => {
-  if (connected && addr && status.value === 'idle') {
+  if (connected && addr && status.value === 'idle' && userInitiated.value) {
     signIn()
   }
 })
@@ -133,9 +142,27 @@ watch([isConnected, address], ([connected, addr]) => {
         Connected via {{ connector?.name ?? 'wallet' }}
         <span class="siwe-address">{{ address.slice(0, 6) }}...{{ address.slice(-4) }}</span>
       </p>
+
+      <button
+        v-if="status === 'idle'"
+        class="siwe-sign-btn"
+        @click="signIn"
+      >
+        Sign Message
+      </button>
+
+      <button
+        class="siwe-disconnect-btn"
+        @click="disconnect()"
+      >
+        Disconnect
+      </button>
     </div>
 
-    <EvmConnect v-else-if="status !== 'submitting'" />
+    <EvmConnect
+      v-else-if="status !== 'submitting'"
+      @connected="onConnected"
+    />
   </div>
 </template>
 
@@ -184,11 +211,47 @@ watch([isConnected, address], ([connected, addr]) => {
 
 .siwe-connected {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.siwe-connected p {
   font-size: 0.875rem;
   opacity: 0.7;
 }
 
 .siwe-address {
   font-family: monospace;
+}
+
+.siwe-sign-btn {
+  padding: 0.625rem 1.5rem;
+  border-radius: 0.375rem;
+  border: none;
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.siwe-sign-btn:hover {
+  opacity: 0.9;
+}
+
+.siwe-disconnect-btn {
+  padding: 0.375rem 1rem;
+  border-radius: 0.375rem;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.siwe-disconnect-btn:hover {
+  opacity: 0.8;
 }
 </style>
