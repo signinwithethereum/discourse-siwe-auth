@@ -3,7 +3,7 @@ module OmniAuth
     class Siwe
       include OmniAuth::Strategy
 
-      option :fields, %i[eth_message eth_account eth_signature]
+      option :fields, %i[eth_message eth_account eth_signature eth_name]
       option :uid_field, :eth_account
 
       uid do
@@ -11,8 +11,9 @@ module OmniAuth
       end
 
       info do
+        eth_name = request.params['eth_name']
         {
-          name: request.params[options.uid_field.to_s],
+          name: eth_name.to_s.empty? ? request.params[options.uid_field.to_s] : eth_name,
           image: request.params['eth_avatar']
         }
       end

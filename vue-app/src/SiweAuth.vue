@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useConnection, useDisconnect, useSignMessage } from '@wagmi/vue'
-import { Button, EvmAccount, EvmConnect } from '@1001-digital/components'
+import {
+  Button,
+  EvmAccount,
+  EvmConnect,
+  useEnsWithAvatar,
+  useResolveUri,
+} from '@1001-digital/components'
 
 const props = defineProps<{
   messageUrl: string
@@ -18,6 +24,12 @@ const { mutate: disconnect } = useDisconnect()
 // Track whether the user actively connected via EvmConnect
 // (as opposed to an auto-reconnect on page load).
 const userInitiated = ref(false)
+
+// ENS resolution
+const { data: ensData } = useEnsWithAvatar(address)
+const resolve = useResolveUri()
+const ensName = computed(() => ensData.value?.ens ?? '')
+const ensAvatar = computed(() => resolve(ensData.value?.data?.avatar) ?? '')
 
 async function fetchSiweMessage(
   ethAccount: string,
@@ -40,7 +52,13 @@ async function fetchSiweMessage(
   return message
 }
 
-function submitForm(account: string, message: string, signature: string) {
+function submitForm(
+  account: string,
+  message: string,
+  signature: string,
+  name: string,
+  avatar: string,
+) {
   const setField = (id: string, value: string) => {
     const el = document.getElementById(id) as HTMLTextAreaElement | null
     if (el) el.value = value
@@ -49,7 +67,8 @@ function submitForm(account: string, message: string, signature: string) {
   setField('eth_account', account)
   setField('eth_message', message)
   setField('eth_signature', signature)
-  setField('eth_avatar', '')
+  setField('eth_name', name)
+  setField('eth_avatar', avatar)
 
   const form = document.getElementById('siwe-sign') as HTMLFormElement | null
   form?.submit()
@@ -67,7 +86,13 @@ async function signIn() {
     const signature = await signMessageAsync({ message })
 
     status.value = 'submitting'
-    submitForm(address.value, message, signature)
+    submitForm(
+      address.value,
+      message,
+      signature,
+      ensName.value,
+      ensAvatar.value,
+    )
   } catch (err: unknown) {
     status.value = 'error'
     if (err instanceof Error) {
