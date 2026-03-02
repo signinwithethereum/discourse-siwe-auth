@@ -5,9 +5,7 @@ import { EvmAccount, EvmConnect } from '@1001-digital/components'
 
 const props = defineProps<{
   messageUrl: string
-  callbackUrl: string
   csrfToken: string
-  statement?: string
 }>()
 
 const status = ref<'idle' | 'signing' | 'submitting' | 'error'>('idle')
@@ -20,10 +18,6 @@ const { mutate: disconnect } = useDisconnect()
 // Track whether the user actively connected via EvmConnect
 // (as opposed to an auto-reconnect on page load).
 const userInitiated = ref(false)
-
-function onConnecting() {
-  userInitiated.value = true
-}
 
 async function fetchSiweMessage(
   ethAccount: string,
@@ -46,12 +40,7 @@ async function fetchSiweMessage(
   return message
 }
 
-function submitForm(
-  account: string,
-  message: string,
-  signature: string,
-  avatar: string,
-) {
+function submitForm(account: string, message: string, signature: string) {
   const setField = (id: string, value: string) => {
     const el = document.getElementById(id) as HTMLTextAreaElement | null
     if (el) el.value = value
@@ -60,7 +49,7 @@ function submitForm(
   setField('eth_account', account)
   setField('eth_message', message)
   setField('eth_signature', signature)
-  setField('eth_avatar', avatar)
+  setField('eth_avatar', '')
 
   const form = document.getElementById('siwe-sign') as HTMLFormElement | null
   form?.submit()
@@ -78,7 +67,7 @@ async function signIn() {
     const signature = await signMessageAsync({ message })
 
     status.value = 'submitting'
-    submitForm(address.value, message, signature, '')
+    submitForm(address.value, message, signature)
   } catch (err: unknown) {
     status.value = 'error'
     if (err instanceof Error) {
@@ -127,7 +116,7 @@ watch([isConnected, address], ([connected, addr]) => {
     >
       <p>{{ errorMessage }}</p>
       <button
-        class="siwe-retry-btn"
+        class="siwe-btn"
         @click="signIn"
       >
         Try again
@@ -155,7 +144,7 @@ watch([isConnected, address], ([connected, addr]) => {
       </button>
 
       <button
-        class="siwe-disconnect-btn"
+        class="siwe-btn siwe-btn--subtle"
         @click="disconnect()"
       >
         Disconnect
@@ -164,7 +153,7 @@ watch([isConnected, address], ([connected, addr]) => {
 
     <EvmConnect
       v-else-if="status !== 'submitting'"
-      @connecting="onConnecting"
+      @connecting="userInitiated = true"
     />
   </div>
 </template>
@@ -198,7 +187,7 @@ watch([isConnected, address], ([connected, addr]) => {
   gap: 0.75rem;
 }
 
-.siwe-retry-btn {
+.siwe-btn {
   padding: 0.5rem 1.25rem;
   border-radius: 0.375rem;
   border: 1px solid currentColor;
@@ -208,8 +197,14 @@ watch([isConnected, address], ([connected, addr]) => {
   font-size: 0.875rem;
 }
 
-.siwe-retry-btn:hover {
+.siwe-btn:hover {
   opacity: 0.8;
+}
+
+.siwe-btn--subtle {
+  font-size: 0.75rem;
+  padding: 0.375rem 1rem;
+  opacity: 0.6;
 }
 
 .siwe-connected {
@@ -241,20 +236,5 @@ watch([isConnected, address], ([connected, addr]) => {
 
 .siwe-sign-btn:hover {
   opacity: 0.9;
-}
-
-.siwe-disconnect-btn {
-  padding: 0.375rem 1rem;
-  border-radius: 0.375rem;
-  border: 1px solid currentColor;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font-size: 0.75rem;
-  opacity: 0.6;
-}
-
-.siwe-disconnect-btn:hover {
-  opacity: 0.8;
 }
 </style>
