@@ -10,7 +10,7 @@ import {
 } from '@1001-digital/components'
 import SiweAuth from './SiweAuth.vue'
 import { createWagmiConfig } from './wagmi'
-import { createShadowRoot, injectStyles, captureDevStyles } from './shadow'
+import { createShadowRoot, injectStyles, captureDevStyles, getHostCSSOverrides } from './shadow'
 
 // In production, the cssToShadow Vite plugin prepends extracted component
 // CSS as `var __siwe_css__` to the IIFE bundle. We reference it here.
@@ -31,9 +31,11 @@ export function mountSiwe(el: string | HTMLElement, options: SiweOptions) {
   // Shadow DOM encapsulation
   const { shadow, root, teleportTarget } = createShadowRoot(element)
 
-  // Inject base styles + component CSS extracted at build time
+  // Inject base styles + Discourse theme overrides + component CSS
+  const hostOverrides = getHostCSSOverrides()
   const allStyles = [
     globalStyles,
+    hostOverrides,
     ':host { color-scheme: inherit; }',
     typeof __siwe_css__ !== 'undefined' ? __siwe_css__ : '',
   ].join('\n')

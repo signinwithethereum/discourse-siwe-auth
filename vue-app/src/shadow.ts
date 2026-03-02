@@ -17,6 +17,42 @@ function adaptStyles(css: string): string {
 }
 
 /**
+ * Map Discourse CSS custom properties to @1001-digital/styles equivalents.
+ * Each entry is [discourseVar, [...targetVars]].
+ */
+const DISCOURSE_VAR_MAP: [string, string[]][] = [
+  ['--primary',        ['--color', '--primary']],
+  ['--secondary',      ['--background']],
+  ['--danger',         ['--error']],
+  ['--success',        ['--success']],
+  ['--primary-medium', ['--muted']],
+  ['--font-family',    ['--font-family']],
+]
+
+/**
+ * Read Discourse theme CSS variables from the host document and return
+ * a `:host {}` block that overrides the @1001-digital/styles defaults.
+ * Returns an empty string when no Discourse variables are present
+ * (e.g. in standalone dev mode).
+ */
+export function getHostCSSOverrides(): string {
+  const computed = getComputedStyle(document.documentElement)
+  const declarations: string[] = []
+
+  for (const [discourseVar, targetVars] of DISCOURSE_VAR_MAP) {
+    const value = computed.getPropertyValue(discourseVar).trim()
+    if (!value) continue
+    for (const target of targetVars) {
+      declarations.push(`${target}: ${value};`)
+    }
+  }
+
+  return declarations.length
+    ? `:host { ${declarations.join(' ')} }`
+    : ''
+}
+
+/**
  * Attach a shadow root to the host element with an inner mount
  * point and a teleport target for dialogs/overlays.
  */
