@@ -21,12 +21,13 @@ function adaptStyles(css: string): string {
  * Each entry is [discourseVar, [...targetVars]].
  */
 const DISCOURSE_VAR_MAP: [string, string[]][] = [
-  ['--primary',        ['--color', '--primary']],
-  ['--secondary',      ['--background']],
-  ['--danger',         ['--error']],
-  ['--success',        ['--success']],
+  ['--primary', ['--color', '--primary']],
+  ['--secondary', ['--background']],
+  ['--danger', ['--error']],
+  ['--success', ['--success']],
   ['--primary-medium', ['--muted']],
-  ['--font-family',    ['--font-family']],
+  ['--font-family', ['--font-family']],
+  ['--border-color', ['--content-border-color']],
 ]
 
 /**
@@ -47,9 +48,7 @@ export function getHostCSSOverrides(): string {
     }
   }
 
-  return declarations.length
-    ? `:host { ${declarations.join(' ')} }`
-    : ''
+  return declarations.length ? `:host { ${declarations.join(' ')} }` : ''
 }
 
 /**
