@@ -1,3 +1,0 @@
-[submodule "spec/fixtures/ethereum/tests"]
-	path = spec/fixtures/ethereum/tests
-	url = https://github.com/ethereum/tests.git
