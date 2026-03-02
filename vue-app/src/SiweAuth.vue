@@ -13,7 +13,7 @@ const props = defineProps<{
 const status = ref<'idle' | 'signing' | 'submitting' | 'error'>('idle')
 const errorMessage = ref('')
 
-const { address, chainId, isConnected } = useConnection()
+const { address, chainId, isConnected, connector } = useConnection()
 const { mutateAsync: signMessageAsync } = useSignMessage()
 
 async function fetchSiweMessage(
@@ -125,7 +125,17 @@ watch([isConnected, address], ([connected, addr]) => {
       </button>
     </div>
 
-    <EvmConnect v-if="status !== 'submitting'" />
+    <div
+      v-if="isConnected && address"
+      class="siwe-connected"
+    >
+      <p>
+        Connected via {{ connector?.name ?? 'wallet' }}
+        <span class="siwe-address">{{ address.slice(0, 6) }}...{{ address.slice(-4) }}</span>
+      </p>
+    </div>
+
+    <EvmConnect v-else-if="status !== 'submitting'" />
   </div>
 </template>
 
@@ -170,5 +180,15 @@ watch([isConnected, address], ([connected, addr]) => {
 
 .siwe-retry-btn:hover {
   opacity: 0.8;
+}
+
+.siwe-connected {
+  text-align: center;
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.siwe-address {
+  font-family: monospace;
 }
 </style>
