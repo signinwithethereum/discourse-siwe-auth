@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useAccount, useSignMessage } from '@wagmi/vue'
+import { useConnection, useSignMessage } from '@wagmi/vue'
 import { EvmConnect } from '@1001-digital/components'
 
 const props = defineProps<{
@@ -13,8 +13,8 @@ const props = defineProps<{
 const status = ref<'idle' | 'signing' | 'submitting' | 'error'>('idle')
 const errorMessage = ref('')
 
-const { address, chainId, isConnected } = useAccount()
-const { signMessageAsync } = useSignMessage()
+const { address, chainId, isConnected } = useConnection()
+const { mutateAsync: signMessageAsync } = useSignMessage()
 
 async function fetchSiweMessage(
   ethAccount: string,
