@@ -21,8 +21,7 @@ const { mutate: disconnect } = useDisconnect()
 // (as opposed to an auto-reconnect on page load).
 const userInitiated = ref(false)
 
-function onConnected() {
-  console.log('onConnected')
+function onConnecting() {
   userInitiated.value = true
 }
 
@@ -99,11 +98,8 @@ async function signIn() {
 }
 
 // Auto-sign only when the user actively connects (not on page-load reconnect)
-watch([isConnected, address, userInitiated], ([connected, addr, initiated]) => {
-  console.log(isConnected)
-  console.log(address)
-  console.log(userInitiated)
-  if (connected && addr && status.value === 'idle' && initiated) {
+watch([isConnected, address], ([connected, addr]) => {
+  if (connected && addr && status.value === 'idle' && userInitiated.value) {
     signIn()
   }
 })
@@ -168,7 +164,7 @@ watch([isConnected, address, userInitiated], ([connected, addr, initiated]) => {
 
     <EvmConnect
       v-else-if="status !== 'submitting'"
-      @connected="onConnected"
+      @connecting="onConnecting"
     />
   </div>
 </template>
