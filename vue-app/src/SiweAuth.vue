@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useConnection, useDisconnect, useSignMessage } from '@wagmi/vue'
-import { EvmAccount, EvmConnect } from '@1001-digital/components'
+import { Button, EvmAccount, EvmConnect } from '@1001-digital/components'
 
 const props = defineProps<{
   messageUrl: string
@@ -96,60 +96,50 @@ watch([isConnected, address], ([connected, addr]) => {
 
 <template>
   <div class="siwe-auth">
-    <div
+    <template
       v-if="status === 'signing'"
       class="siwe-status"
     >
       <p>Please sign the message in your wallet...</p>
-    </div>
+    </template>
 
-    <div
-      v-else-if="status === 'submitting'"
-      class="siwe-status"
-    >
+    <template v-else-if="status === 'submitting'">
       <p>Verifying signature...</p>
-    </div>
+    </template>
 
-    <div
-      v-else-if="status === 'error'"
-      class="siwe-error"
-    >
-      <p>{{ errorMessage }}</p>
-      <button
-        class="siwe-btn"
+    <template v-else-if="isConnected && status === 'error'">
+      <p class="error">{{ errorMessage }}</p>
+      <Button
+        class="block danger"
         @click="signIn"
       >
         Try again
-      </button>
-    </div>
+      </Button>
+      <hr />
+    </template>
 
-    <div
-      v-if="isConnected && address"
-      class="siwe-connected"
-    >
+    <template v-if="isConnected && address">
       <p>
         Connected via {{ connector?.name ?? 'wallet' }}
         <EvmAccount
           :address="address"
           class="siwe-address"
-        />
+        />.
       </p>
-
-      <button
+      <Button
         v-if="status === 'idle'"
-        class="siwe-sign-btn"
+        class="block"
         @click="signIn"
       >
         Sign Message
-      </button>
-
-      <button
-        class="siwe-btn siwe-btn--subtle"
+      </Button>
+      <Button
+        class="block tertiary"
         @click="disconnect()"
       >
-        Disconnect
-      </button>
-    </div>
+        Switch wallet
+      </Button>
+    </template>
 
     <EvmConnect
       v-else-if="status !== 'submitting'"
@@ -160,81 +150,24 @@ watch([isConnected, address], ([connected, addr]) => {
 
 <style scoped>
 .siwe-auth {
-  display: flex;
   flex-direction: column;
+  display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100%;
-  gap: 1.5rem;
-  padding: 2rem;
+  gap: var(--spacer);
+  padding: var(--spacer);
 
   > * {
     width: 100%;
   }
-}
 
-.siwe-status {
-  text-align: center;
-  font-size: 1.125rem;
-}
+  .error {
+    color: var(--error);
+  }
 
-.siwe-error {
-  text-align: center;
-  color: var(--color-danger, #e74c3c);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.siwe-btn {
-  padding: 0.5rem 1.25rem;
-  border-radius: 0.375rem;
-  border: 1px solid currentColor;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-.siwe-btn:hover {
-  opacity: 0.8;
-}
-
-.siwe-btn--subtle {
-  font-size: 0.75rem;
-  padding: 0.375rem 1rem;
-  opacity: 0.6;
-}
-
-.siwe-connected {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.siwe-connected p {
-  font-size: 0.875rem;
-  opacity: 0.7;
-}
-
-.siwe-address {
-  font-family: monospace;
-}
-
-.siwe-sign-btn {
-  padding: 0.625rem 1.5rem;
-  border-radius: 0.375rem;
-  border: none;
-  background: var(--color-primary, #3b82f6);
-  color: #fff;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.siwe-sign-btn:hover {
-  opacity: 0.9;
+  .centered {
+    text-align: center;
+  }
 }
 </style>
