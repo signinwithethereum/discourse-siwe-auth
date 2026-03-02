@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useConnection, useDisconnect, useSignMessage } from '@wagmi/vue'
-import { EvmConnect } from '@1001-digital/components'
+import { EvmAccount, EvmConnect } from '@1001-digital/components'
 
 const props = defineProps<{
   messageUrl: string
@@ -22,6 +22,7 @@ const { mutate: disconnect } = useDisconnect()
 const userInitiated = ref(false)
 
 function onConnected() {
+  console.log('onConnected')
   userInitiated.value = true
 }
 
@@ -98,8 +99,11 @@ async function signIn() {
 }
 
 // Auto-sign only when the user actively connects (not on page-load reconnect)
-watch([isConnected, address], ([connected, addr]) => {
-  if (connected && addr && status.value === 'idle' && userInitiated.value) {
+watch([isConnected, address, userInitiated], ([connected, addr, initiated]) => {
+  console.log(isConnected)
+  console.log(address)
+  console.log(userInitiated)
+  if (connected && addr && status.value === 'idle' && initiated) {
     signIn()
   }
 })
@@ -140,7 +144,10 @@ watch([isConnected, address], ([connected, addr]) => {
     >
       <p>
         Connected via {{ connector?.name ?? 'wallet' }}
-        <span class="siwe-address">{{ address.slice(0, 6) }}...{{ address.slice(-4) }}</span>
+        <EvmAccount
+          :address="address"
+          class="siwe-address"
+        />
       </p>
 
       <button
