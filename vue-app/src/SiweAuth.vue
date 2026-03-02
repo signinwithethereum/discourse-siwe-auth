@@ -20,7 +20,13 @@ const errorMessage = ref('')
 
 const { address, chainId, isConnected, connector } = useConnection()
 const { mutateAsync: signMessageAsync } = useSignMessage()
-const { mutate: disconnect } = useDisconnect()
+const { mutate: disconnectAccount } = useDisconnect()
+
+const disconnect = () => {
+  status.value = 'idle'
+  errorMessage.value = ''
+  disconnectAccount()
+}
 
 // Track whether the user actively connected via EvmConnect
 // (as opposed to an auto-reconnect on page load).
@@ -126,9 +132,11 @@ watch([isConnected, address], ([connected, addr]) => {
       v-if="status === 'signing'"
       spinner
       stacked
-      :txt="connector?.name
-        ? `Requesting signature from ${connector.name}...`
-        : 'Requesting signature...'"
+      :txt="
+        connector?.name
+          ? `Requesting signature from ${connector.name}...`
+          : 'Requesting signature...'
+      "
     />
 
     <Loading
@@ -150,13 +158,6 @@ watch([isConnected, address], ([connected, addr]) => {
     </template>
 
     <template v-if="isConnected && address">
-      <p>
-        Connected via {{ connector?.name ?? 'wallet' }}
-        <EvmAccount
-          :address="address"
-          class="siwe-address"
-        />.
-      </p>
       <Button
         v-if="status === 'idle'"
         class="block"
@@ -168,7 +169,10 @@ watch([isConnected, address], ([connected, addr]) => {
         class="block tertiary"
         @click="disconnect()"
       >
-        Switch wallet
+        Switch wallet (<EvmAccount
+          :address="address"
+          class="siwe-address"
+        />)
       </Button>
     </template>
 
