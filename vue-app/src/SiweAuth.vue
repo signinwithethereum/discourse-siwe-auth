@@ -5,6 +5,7 @@ import {
   Button,
   EvmAccount,
   EvmConnect,
+  Loading,
   useEnsWithAvatar,
   useResolveUri,
 } from '@1001-digital/components'
@@ -121,16 +122,21 @@ watch([isConnected, address], ([connected, addr]) => {
 
 <template>
   <div class="siwe-auth">
-    <template
+    <Loading
       v-if="status === 'signing'"
-      class="siwe-status"
-    >
-      <p>Please sign the message in your wallet...</p>
-    </template>
+      spinner
+      stacked
+      :txt="connector?.name
+        ? `Requesting signature from ${connector.name}...`
+        : 'Requesting signature...'"
+    />
 
-    <template v-else-if="status === 'submitting'">
-      <p>Verifying signature...</p>
-    </template>
+    <Loading
+      v-else-if="status === 'submitting'"
+      spinner
+      stacked
+      txt="Verifying signature..."
+    />
 
     <template v-else-if="isConnected && status === 'error'">
       <p class="error">{{ errorMessage }}</p>
