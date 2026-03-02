@@ -12,8 +12,10 @@ module OmniAuth
 
       info do
         eth_name = request.params['eth_name']
+        display_name = eth_name.to_s.empty? ? request.params[options.uid_field.to_s] : eth_name
         {
-          name: eth_name.to_s.empty? ? request.params[options.uid_field.to_s] : eth_name,
+          nickname: display_name,
+          name: display_name,
           image: request.params['eth_avatar']
         }
       end

@@ -46,6 +46,10 @@ class ::SiweAuthenticator < ::Auth::ManagedAuthenticator
   def primary_email_verified?
     false
   end
+
+  def description_for_auth_hash(auth_token)
+    auth_token&.uid
+  end
 end
 
 auth_provider authenticator: ::SiweAuthenticator.new,
