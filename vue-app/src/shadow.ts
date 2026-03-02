@@ -27,7 +27,8 @@ const DISCOURSE_VAR_MAP: [string, string[]][] = [
   ['--success', ['--success']],
   ['--primary-medium', ['--muted']],
   ['--font-family', ['--font-family']],
-  ['--border-color', ['--content-border-color']],
+  ['--border-color', ['--content-border-color', '--border-color']],
+  ['--button-background', ['--d-button-default-bg-color']],
 ]
 
 /**
