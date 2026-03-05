@@ -4,6 +4,8 @@ discourse_siwe:
   siwe_project_id:
     client: true
     default: ''
+  siwe_ethereum_rpc_url:
+    default: ''
   siwe_statement:
     client: true
     default: 'Sign in with Ethereum'
