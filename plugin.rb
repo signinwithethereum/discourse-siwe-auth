@@ -58,13 +58,10 @@ auth_provider authenticator: ::SiweAuthenticator.new,
               full_screen_login: true
 
 after_initialize do
-  %w[
-    ../lib/discourse_siwe/engine.rb
-    ../lib/discourse_siwe/routes.rb
-    ../app/controllers/discourse_siwe/auth_controller.rb
-  ].each { |path| load File.expand_path(path, __FILE__) }
+  load File.expand_path('../app/controllers/discourse_siwe/auth_controller.rb', __FILE__)
 
   Discourse::Application.routes.prepend do
-    mount ::DiscourseSiwe::Engine, at: '/discourse-siwe'
+    get '/discourse-siwe/auth' => 'discourse_siwe/auth#index'
+    get '/discourse-siwe/message' => 'discourse_siwe/auth#message'
   end
 end
