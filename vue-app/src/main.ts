@@ -58,6 +58,7 @@ export function mountSiwe(el: string | HTMLElement, options: SiweOptions) {
         h(SiweAuth, {
           messageUrl: options.messageUrl,
           csrfToken: options.csrfToken,
+          statement: options.statement,
         }),
       ]
     },

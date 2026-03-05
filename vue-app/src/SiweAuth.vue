@@ -13,6 +13,7 @@ import {
 const props = defineProps<{
   messageUrl: string
   csrfToken: string
+  statement?: string
 }>()
 
 const status = ref<'idle' | 'signing' | 'submitting' | 'error'>('idle')
@@ -163,7 +164,7 @@ watch([isConnected, address], ([connected, addr]) => {
         class="block"
         @click="signIn"
       >
-        Sign in with Ethereum
+        {{ statement || 'Sign in with Ethereum' }}
       </Button>
       <Button
         class="block tertiary"
