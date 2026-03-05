@@ -58,7 +58,7 @@ Click **Settings** to configure the plugin:
 | Setting | Description |
 | --- | --- |
 | **Discourse siwe enabled** | Enable or disable Sign-In with Ethereum authentication. |
-| **Siwe project ID** | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [cloud.walletconnect.com](https://cloud.walletconnect.com). |
+| **Siwe project ID** | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [dashboard.reown.com](https://dashboard.reown.com). |
 | **Siwe statement** | The human-readable statement shown in the SIWE message. Defaults to "Sign in with Ethereum". |
 
 ## How it works
