@@ -53,6 +53,10 @@ Click **Settings** to configure the plugin:
 
 ![Plugin settings](/settings.png 'Plugin settings')
 
+From here you can customize the sign-in statement and optionally add a
+WalletConnect / Reown project ID. Without a project ID, only injected wallets
+(MetaMask, Safe, etc.) are available.
+
 ### Settings
 
 | Setting | Description |
