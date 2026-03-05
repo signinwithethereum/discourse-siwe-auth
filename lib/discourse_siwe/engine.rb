@@ -5,5 +5,7 @@ module ::DiscourseSiwe
   class Engine < ::Rails::Engine
     engine_name PLUGIN_NAME
     isolate_namespace DiscourseSiwe
+
+    config.root = File.expand_path('../..', __dir__)
   end
 end
