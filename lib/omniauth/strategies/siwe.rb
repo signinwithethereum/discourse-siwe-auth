@@ -44,11 +44,11 @@ module OmniAuth
         failure_reason = nil
         begin
           siwe_message.validate(eth_signature)
-        rescue Siwe::ExpiredMessage
+        rescue ::Siwe::ExpiredMessage
           failure_reason = :expired_message
-        rescue Siwe::NotValidMessage
+        rescue ::Siwe::NotValidMessage
           failure_reason = :invalid_message
-        rescue Siwe::InvalidSignature
+        rescue ::Siwe::InvalidSignature
           failure_reason = :invalid_signature
         end
 
