@@ -62,6 +62,7 @@ WalletConnect / Reown project ID. Without a project ID, only injected wallets
 | Setting | Description |
 | --- | --- |
 | **Discourse siwe enabled** | Enable or disable Sign-In with Ethereum authentication. |
+| **Siwe ethereum rpc url** | _Optional._ An Ethereum JSON-RPC endpoint used for EIP-1271 signature verification. Required for smart contract wallets like SAFE. Example: `https://mainnet.infura.io/v3/YOUR_KEY`. |
 | **Siwe project ID** | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [dashboard.reown.com](https://dashboard.reown.com). |
 | **Siwe statement** | The human-readable statement shown in the SIWE message. Defaults to "Sign in with Ethereum". |
 
