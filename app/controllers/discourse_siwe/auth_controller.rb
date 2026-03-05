@@ -7,7 +7,7 @@ module DiscourseSiwe
     skip_before_action :redirect_to_login_if_required, only: %i[index message]
 
     def index
-      render 'default/empty'
+      raise ApplicationController::RenderEmpty
     end
 
     def message
