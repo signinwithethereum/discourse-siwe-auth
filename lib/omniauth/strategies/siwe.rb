@@ -185,11 +185,24 @@ module OmniAuth
         resolved_addr = abi_decode_address(addr_hex)
         return [nil, nil] unless resolved_addr&.downcase == address.downcase
 
-        [name, "https://metadata.ens.domains/mainnet/avatar/#{name}"]
+        [name, ens_avatar_url(name)]
       rescue StandardError
         [nil, nil]
       end
 
+      # Returns the ENS metadata avatar URL if it exists, nil otherwise.
+      def ens_avatar_url(name)
+        url = "https://metadata.ens.domains/mainnet/avatar/#{name}"
+        uri = URI(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.open_timeout = 5
+        http.read_timeout = 5
+        response = http.request(Net::HTTP::Head.new(uri.path))
+        response.code.to_i == 200 ? url : nil
+      rescue StandardError
+        nil
+      end
     end
   end
 end
