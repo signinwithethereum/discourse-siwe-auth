@@ -3,7 +3,7 @@
 A Discourse plugin that lets users authenticate with their Ethereum wallet using
 the [Sign-In with Ethereum (SIWE)](https://login.xyz) standard. Injected wallets
 (MetaMask, Safe, etc.) work out of the box. ENS names and avatars are resolved
-automatically.
+server-side when an RPC endpoint is configured.
 
 ## Requirements
 
@@ -62,7 +62,7 @@ WalletConnect / Reown project ID. Without a project ID, only injected wallets
 | Setting | Description |
 | --- | --- |
 | **Discourse siwe enabled** | Enable or disable Sign-In with Ethereum authentication. |
-| **Siwe ethereum rpc url** | _Optional._ An Ethereum JSON-RPC endpoint used for EIP-1271 signature verification. Required for smart contract wallets like SAFE. Example: `https://mainnet.infura.io/v3/YOUR_KEY`. |
+| **Siwe ethereum rpc url** | _Optional._ An Ethereum JSON-RPC endpoint used for ENS name/avatar resolution and EIP-1271 signature verification (required for smart contract wallets like SAFE). A dedicated provider (Alchemy, Infura) is recommended. Example: `https://mainnet.infura.io/v3/YOUR_KEY`. |
 | **Siwe project ID** | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [dashboard.reown.com](https://dashboard.reown.com). |
 | **Siwe statement** | The human-readable statement shown in the SIWE message. Defaults to "Sign in with Ethereum". |
 
@@ -73,8 +73,10 @@ authentication. The user connects their wallet, signs a SIWE message,
 and is authenticated via an OmniAuth strategy on the server side.
 
 After first sign-in, users are asked to associate an email address with their
-account. If the connected address has an ENS name, it is suggested as the
-default username.
+account. If an RPC URL is configured and the connected address has an ENS name,
+the name is resolved and verified server-side and suggested as the default
+username. ENS avatars are fetched via the ENS metadata service and used as the
+profile photo.
 
 Alternatively, existing users can connect their Ethereum accounts via
 their profile settings.
