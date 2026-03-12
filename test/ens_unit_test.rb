@@ -69,10 +69,10 @@ class EnsNamehashTest < Minitest::Test
   end
 
   def test_alice_dot_eth
-    expected = '787192fc5378cc32aa956ddfdedbf26b24e8097e87e8f1f430f8e"; abort' # not a real injection
-    # Compute actual value
-    actual = EnsHelpers.ens_namehash('alice.eth')
-    assert_equal 64, actual.length, 'namehash should be 64 hex chars'
+    # Verify determinism and correct length
+    hash = EnsHelpers.ens_namehash('alice.eth')
+    assert_equal 64, hash.length, 'namehash should be 64 hex chars'
+    assert_equal hash, EnsHelpers.ens_namehash('alice.eth')
   end
 
   def test_reverse_node

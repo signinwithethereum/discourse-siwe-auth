@@ -77,16 +77,25 @@ module OmniAuth
         url if url && !url.empty?
       end
 
-      # Generic JSON-RPC eth_call. Returns hex result without 0x prefix, or nil.
-      def eth_call(to, data)
-        return nil unless rpc_url
-
+      # Build a reusable HTTP connection to the configured RPC endpoint.
+      def rpc_connection
         uri = URI(rpc_url)
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = uri.scheme == 'https'
         http.open_timeout = 10
         http.read_timeout = 10
-        req = Net::HTTP::Post.new(uri.path.empty? ? '/' : uri.path, 'Content-Type' => 'application/json')
+        http
+      end
+
+      # Generic JSON-RPC eth_call. Returns hex result without 0x prefix, or nil.
+      # Accepts an optional +http+ connection for reuse across sequential calls.
+      def eth_call(to, data, http: nil)
+        return nil unless rpc_url
+
+        http ||= rpc_connection
+        path = URI(rpc_url).path
+        path = '/' if path.empty?
+        req = Net::HTTP::Post.new(path, 'Content-Type' => 'application/json')
         req.body = {
           jsonrpc: "2.0",
           method: "eth_call",
@@ -161,31 +170,34 @@ module OmniAuth
       def resolve_ens(address)
         return [nil, nil] unless rpc_url
 
-        # Step 1: Reverse resolve address → name
-        addr_clean = Eth::Util.remove_hex_prefix(address).downcase
-        reverse_node = ens_namehash("#{addr_clean}.addr.reverse")
+        http = rpc_connection
+        http.start do
+          # Step 1: Reverse resolve address → name
+          addr_clean = Eth::Util.remove_hex_prefix(address).downcase
+          reverse_node = ens_namehash("#{addr_clean}.addr.reverse")
 
-        # Get resolver for the reverse node from ENS registry
-        resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{reverse_node}")
-        resolver = abi_decode_address(resolver_hex)
-        return [nil, nil] unless resolver
+          # Get resolver for the reverse node from ENS registry
+          resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{reverse_node}", http: http)
+          resolver = abi_decode_address(resolver_hex)
+          return [nil, nil] unless resolver
 
-        # Get the name from the reverse resolver
-        name_hex = eth_call(resolver, "0x691f3431#{reverse_node}")
-        name = abi_decode_string(name_hex)
-        return [nil, nil] if name.nil? || name.empty?
+          # Get the name from the reverse resolver
+          name_hex = eth_call(resolver, "0x691f3431#{reverse_node}", http: http)
+          name = abi_decode_string(name_hex)
+          return [nil, nil] if name.nil? || name.empty?
 
-        # Step 2: Forward verify — resolve name back to address to prevent spoofing
-        forward_node = ens_namehash(name)
-        fwd_resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{forward_node}")
-        fwd_resolver = abi_decode_address(fwd_resolver_hex)
-        return [nil, nil] unless fwd_resolver
+          # Step 2: Forward verify — resolve name back to address to prevent spoofing
+          forward_node = ens_namehash(name)
+          fwd_resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{forward_node}", http: http)
+          fwd_resolver = abi_decode_address(fwd_resolver_hex)
+          return [nil, nil] unless fwd_resolver
 
-        addr_hex = eth_call(fwd_resolver, "0x3b3b57de#{forward_node}")
-        resolved_addr = abi_decode_address(addr_hex)
-        return [nil, nil] unless resolved_addr&.downcase == address.downcase
+          addr_hex = eth_call(fwd_resolver, "0x3b3b57de#{forward_node}", http: http)
+          resolved_addr = abi_decode_address(addr_hex)
+          return [nil, nil] unless resolved_addr&.downcase == address.downcase
 
-        [name, ens_avatar_url(name)]
+          [name, ens_avatar_url(name)]
+        end
       rescue StandardError
         [nil, nil]
       end
