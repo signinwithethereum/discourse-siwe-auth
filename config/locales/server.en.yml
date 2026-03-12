@@ -2,5 +2,5 @@ en:
   site_settings:
     discourse_siwe_enabled: 'Enable Sign In With Ethereum authentication'
     siwe_project_id: 'Project ID for Web3Modal'
-    siwe_ethereum_rpc_url: 'Ethereum RPC URL for EIP-1271 smart contract wallet signature verification (required for SAFE wallets)'
+    siwe_ethereum_rpc_url: 'Ethereum RPC URL — required for ENS name/avatar resolution and EIP-1271 smart contract wallet verification (e.g. SAFE). A dedicated endpoint (Alchemy, Infura) is recommended.'
     siwe_statement: 'Statement that will be displayed in the SIWE message'
