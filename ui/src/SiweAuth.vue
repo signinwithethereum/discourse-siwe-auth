@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useConnection, useDisconnect, useSignMessage } from '@wagmi/vue'
 import {
   Button,
   EvmAccount,
   EvmConnect,
   Loading,
-  useEnsWithAvatar,
-  useResolveUri,
 } from '@1001-digital/components'
 
 const props = defineProps<{
@@ -33,12 +31,6 @@ const disconnect = () => {
 // (as opposed to an auto-reconnect on page load).
 const userInitiated = ref(false)
 
-// ENS resolution
-const { data: ensData } = useEnsWithAvatar(address)
-const resolve = useResolveUri()
-const ensName = computed(() => ensData.value?.ens ?? '')
-const ensAvatar = computed(() => resolve(ensData.value?.data?.avatar) ?? '')
-
 async function fetchSiweMessage(
   ethAccount: string,
   chain: number,
@@ -60,13 +52,7 @@ async function fetchSiweMessage(
   return message
 }
 
-function submitForm(
-  account: string,
-  message: string,
-  signature: string,
-  name: string,
-  avatar: string,
-) {
+function submitForm(account: string, message: string, signature: string) {
   const setField = (id: string, value: string) => {
     const el = document.getElementById(id) as HTMLTextAreaElement | null
     if (el) el.value = value
@@ -75,8 +61,6 @@ function submitForm(
   setField('eth_account', account)
   setField('eth_message', message)
   setField('eth_signature', signature)
-  setField('eth_name', name)
-  setField('eth_avatar', avatar)
 
   const form = document.getElementById('siwe-sign') as HTMLFormElement | null
   form?.submit()
@@ -94,13 +78,7 @@ async function signIn() {
     const signature = await signMessageAsync({ message })
 
     status.value = 'submitting'
-    submitForm(
-      address.value,
-      message,
-      signature,
-      ensName.value,
-      ensAvatar.value,
-    )
+    submitForm(address.value, message, signature)
   } catch (err: unknown) {
     status.value = 'error'
     if (err instanceof Error) {
