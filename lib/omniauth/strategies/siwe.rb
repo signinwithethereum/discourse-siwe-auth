@@ -185,40 +185,11 @@ module OmniAuth
         resolved_addr = abi_decode_address(addr_hex)
         return [nil, nil] unless resolved_addr&.downcase == address.downcase
 
-        # Step 3: Resolve avatar text record
-        avatar = resolve_ens_text(fwd_resolver, forward_node, "avatar")
-        avatar_url = normalize_avatar_uri(avatar)
-
-        [name, avatar_url]
+        [name, "https://metadata.ens.domains/mainnet/avatar/#{name}"]
       rescue StandardError
         [nil, nil]
       end
 
-      # Resolve an ENS text record via text(bytes32,string)
-      def resolve_ens_text(resolver, node, key)
-        key_hex = key.unpack1('H*')
-        key_padded = key_hex.ljust(((key_hex.length + 63) / 64) * 64, '0')
-        key_length = key.bytesize.to_s(16).rjust(64, '0')
-
-        data = "0x59d1d43c#{node}" \
-               "0000000000000000000000000000000000000000000000000000000000000040" \
-               "#{key_length}" \
-               "#{key_padded}"
-
-        result_hex = eth_call(resolver, data)
-        abi_decode_string(result_hex)
-      end
-
-      # Convert an avatar URI to an HTTP(S) URL
-      def normalize_avatar_uri(uri)
-        return nil if uri.nil? || uri.empty?
-
-        if uri.start_with?('ipfs://')
-          uri = uri.sub('ipfs://', 'https://ipfs.io/ipfs/')
-        end
-
-        uri.start_with?('http://', 'https://') ? uri : nil
-      end
     end
   end
 end
