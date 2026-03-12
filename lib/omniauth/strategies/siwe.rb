@@ -12,17 +12,15 @@ module OmniAuth
       # ENS Registry contract address (same on all networks)
       ENS_REGISTRY = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 
-      option :fields, %i[eth_message eth_account eth_signature]
-      option :uid_field, :eth_account
+      option :fields, %i[eth_message eth_signature]
 
       uid do
-        request.params[options.uid_field.to_s]
+        @verified_address
       end
 
       info do
-        address = request.params[options.uid_field.to_s]
-        ens_name, ens_avatar = resolve_ens(address)
-        display_name = ens_name || address
+        ens_name, ens_avatar = resolve_ens(@verified_address)
+        display_name = ens_name || @verified_address
         {
           nickname: display_name,
           name: display_name,
@@ -50,6 +48,8 @@ module OmniAuth
         if siwe_message.nonce != session[:nonce]
           return fail!("Invalid nonce")
         end
+
+        @verified_address = siwe_message.address
 
         failure_reason = nil
         begin

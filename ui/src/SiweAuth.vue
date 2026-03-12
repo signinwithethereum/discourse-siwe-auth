@@ -52,13 +52,12 @@ async function fetchSiweMessage(
   return message
 }
 
-function submitForm(account: string, message: string, signature: string) {
+function submitForm(message: string, signature: string) {
   const setField = (id: string, value: string) => {
     const el = document.getElementById(id) as HTMLTextAreaElement | null
     if (el) el.value = value
   }
 
-  setField('eth_account', account)
   setField('eth_message', message)
   setField('eth_signature', signature)
 
@@ -78,7 +77,7 @@ async function signIn() {
     const signature = await signMessageAsync({ message })
 
     status.value = 'submitting'
-    submitForm(address.value, message, signature)
+    submitForm(message, signature)
   } catch (err: unknown) {
     status.value = 'error'
     if (err instanceof Error) {
