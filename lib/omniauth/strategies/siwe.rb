@@ -45,7 +45,8 @@ module OmniAuth
           return fail!("Invalid domain")
         end
 
-        if siwe_message.nonce != session[:nonce]
+        nonce = session.delete(:nonce)
+        if siwe_message.nonce != nonce
           return fail!("Invalid nonce")
         end
 
