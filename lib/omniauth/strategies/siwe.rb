@@ -9,7 +9,10 @@ module OmniAuth
       # EIP-1271 magic value returned by isValidSignature
       EIP1271_MAGIC_VALUE = "1626ba7e"
 
-      option :fields, %i[eth_message eth_account eth_signature eth_name]
+      # ENS Registry contract address (same on all networks)
+      ENS_REGISTRY = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+
+      option :fields, %i[eth_message eth_account eth_signature]
       option :uid_field, :eth_account
 
       uid do
@@ -17,12 +20,13 @@ module OmniAuth
       end
 
       info do
-        eth_name = request.params['eth_name']
-        display_name = eth_name.to_s.empty? ? request.params[options.uid_field.to_s] : eth_name
+        address = request.params[options.uid_field.to_s]
+        ens_name, ens_avatar = resolve_ens(address)
+        display_name = ens_name || address
         {
           nickname: display_name,
           name: display_name,
-          image: request.params['eth_avatar']
+          image: ens_avatar
         }
       end
 
@@ -68,29 +72,15 @@ module OmniAuth
 
       private
 
-      def eip1271_valid?(siwe_message, signature)
-        rpc_url = SiteSetting.siwe_ethereum_rpc_url rescue nil
-        return false if rpc_url.nil? || rpc_url.empty?
+      def rpc_url
+        url = SiteSetting.siwe_ethereum_rpc_url rescue nil
+        url if url && !url.empty?
+      end
 
-        # Hash the message the same way personal_sign does (EIP-191)
-        prefixed = Eth::Signature.prefix_message(siwe_message.prepare_message)
-        message_hash = Eth::Util.bin_to_hex(Eth::Util.keccak256(prefixed))
+      # Generic JSON-RPC eth_call. Returns hex result without 0x prefix, or nil.
+      def eth_call(to, data)
+        return nil unless rpc_url
 
-        # ABI-encode isValidSignature(bytes32 hash, bytes signature)
-        # Function selector: 0x1626ba7e
-        hash_param = message_hash.rjust(64, '0')
-        sig_bytes = Eth::Util.remove_hex_prefix(signature)
-        # offset to bytes data (64 bytes = 0x40)
-        offset = "0000000000000000000000000000000000000000000000000000000000000040"
-        # length of signature bytes
-        sig_length = (sig_bytes.length / 2).to_s(16).rjust(64, '0')
-        # signature data padded to 32-byte boundary
-        sig_padded = sig_bytes.ljust(((sig_bytes.length + 63) / 64) * 64, '0')
-
-        data = "0x1626ba7e#{hash_param}#{offset}#{sig_length}#{sig_padded}"
-        address = siwe_message.address
-
-        # JSON-RPC eth_call
         uri = URI(rpc_url)
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = uri.scheme == 'https'
@@ -100,19 +90,134 @@ module OmniAuth
         req.body = {
           jsonrpc: "2.0",
           method: "eth_call",
-          params: [{ to: address, data: data }, "latest"],
+          params: [{ to: to, data: data }, "latest"],
           id: 1
         }.to_json
 
         response = http.request(req)
         result = JSON.parse(response.body)
+        return nil if result['error'] || result['result'].nil? || result['result'] == '0x'
 
-        return false if result['error'] || result['result'].nil?
-
-        # EIP-1271: returned value is bytes32, magic value is left-aligned
-        Eth::Util.remove_hex_prefix(result['result']).downcase[0, 8] == EIP1271_MAGIC_VALUE
+        Eth::Util.remove_hex_prefix(result['result'])
       rescue StandardError
-        false
+        nil
+      end
+
+      # EIP-1271 smart contract signature verification
+      def eip1271_valid?(siwe_message, signature)
+        return false unless rpc_url
+
+        # Hash the message the same way personal_sign does (EIP-191)
+        prefixed = Eth::Signature.prefix_message(siwe_message.prepare_message)
+        message_hash = Eth::Util.bin_to_hex(Eth::Util.keccak256(prefixed))
+
+        # ABI-encode isValidSignature(bytes32 hash, bytes signature)
+        hash_param = message_hash.rjust(64, '0')
+        sig_bytes = Eth::Util.remove_hex_prefix(signature)
+        offset = "0000000000000000000000000000000000000000000000000000000000000040"
+        sig_length = (sig_bytes.length / 2).to_s(16).rjust(64, '0')
+        sig_padded = sig_bytes.ljust(((sig_bytes.length + 63) / 64) * 64, '0')
+
+        data = "0x1626ba7e#{hash_param}#{offset}#{sig_length}#{sig_padded}"
+        result = eth_call(siwe_message.address, data)
+        return false if result.nil?
+
+        result.downcase[0, 8] == EIP1271_MAGIC_VALUE
+      end
+
+      # Compute ENS namehash for a domain name
+      def ens_namehash(name)
+        node = "\x00" * 32
+        unless name.nil? || name.empty?
+          name.split('.').reverse.each do |label|
+            label_hash = Eth::Util.keccak256(label)
+            node = Eth::Util.keccak256(node + label_hash)
+          end
+        end
+        Eth::Util.bin_to_hex(node)
+      end
+
+      # Decode an ABI-encoded address return value
+      def abi_decode_address(hex)
+        return nil if hex.nil? || hex.length < 40
+        address = hex[-40, 40]
+        return nil if address == '0' * 40
+        "0x#{address}"
+      end
+
+      # Decode an ABI-encoded string return value
+      def abi_decode_string(hex)
+        return nil if hex.nil? || hex.length < 128
+        offset = hex[0, 64].to_i(16) * 2
+        length = hex[offset, 64].to_i(16)
+        return '' if length == 0
+        data_start = offset + 64
+        return nil if hex.length < data_start + length * 2
+        [hex[data_start, length * 2]].pack('H*')
+      end
+
+      # Resolve ENS name and avatar for an Ethereum address.
+      # Returns [name, avatar_url] or [nil, nil].
+      def resolve_ens(address)
+        return [nil, nil] unless rpc_url
+
+        # Step 1: Reverse resolve address → name
+        addr_clean = Eth::Util.remove_hex_prefix(address).downcase
+        reverse_node = ens_namehash("#{addr_clean}.addr.reverse")
+
+        # Get resolver for the reverse node from ENS registry
+        resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{reverse_node}")
+        resolver = abi_decode_address(resolver_hex)
+        return [nil, nil] unless resolver
+
+        # Get the name from the reverse resolver
+        name_hex = eth_call(resolver, "0x691f3431#{reverse_node}")
+        name = abi_decode_string(name_hex)
+        return [nil, nil] if name.nil? || name.empty?
+
+        # Step 2: Forward verify — resolve name back to address to prevent spoofing
+        forward_node = ens_namehash(name)
+        fwd_resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{forward_node}")
+        fwd_resolver = abi_decode_address(fwd_resolver_hex)
+        return [nil, nil] unless fwd_resolver
+
+        addr_hex = eth_call(fwd_resolver, "0x3b3b57de#{forward_node}")
+        resolved_addr = abi_decode_address(addr_hex)
+        return [nil, nil] unless resolved_addr&.downcase == address.downcase
+
+        # Step 3: Resolve avatar text record
+        avatar = resolve_ens_text(fwd_resolver, forward_node, "avatar")
+        avatar_url = normalize_avatar_uri(avatar)
+
+        [name, avatar_url]
+      rescue StandardError
+        [nil, nil]
+      end
+
+      # Resolve an ENS text record via text(bytes32,string)
+      def resolve_ens_text(resolver, node, key)
+        key_hex = key.unpack1('H*')
+        key_padded = key_hex.ljust(((key_hex.length + 63) / 64) * 64, '0')
+        key_length = key.bytesize.to_s(16).rjust(64, '0')
+
+        data = "0x59d1d43c#{node}" \
+               "0000000000000000000000000000000000000000000000000000000000000040" \
+               "#{key_length}" \
+               "#{key_padded}"
+
+        result_hex = eth_call(resolver, data)
+        abi_decode_string(result_hex)
+      end
+
+      # Convert an avatar URI to an HTTP(S) URL
+      def normalize_avatar_uri(uri)
+        return nil if uri.nil? || uri.empty?
+
+        if uri.start_with?('ipfs://')
+          uri = uri.sub('ipfs://', 'https://ipfs.io/ipfs/')
+        end
+
+        uri.start_with?('http://', 'https://') ? uri : nil
       end
     end
   end
