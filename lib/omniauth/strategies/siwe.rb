@@ -163,7 +163,7 @@ module OmniAuth
         return '' if length == 0
         data_start = offset + 64
         return nil if hex.length < data_start + length * 2
-        [hex[data_start, length * 2]].pack('H*')
+        [hex[data_start, length * 2]].pack('H*').force_encoding('UTF-8')
       end
 
       # Resolve ENS name and avatar for an Ethereum address.
