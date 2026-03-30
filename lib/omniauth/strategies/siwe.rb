@@ -119,7 +119,7 @@ module OmniAuth
 
         # Hash the message the same way personal_sign does (EIP-191)
         prefixed = Eth::Signature.prefix_message(siwe_message.prepare_message)
-        message_hash = Eth::Util.bin_to_hex(Eth::Util.keccak256(prefixed))
+        message_hash = Eth::Util.remove_hex_prefix(Eth::Util.bin_to_hex(Eth::Util.keccak256(prefixed)))
 
         # ABI-encode isValidSignature(bytes32 hash, bytes signature)
         hash_param = message_hash.rjust(64, '0')
