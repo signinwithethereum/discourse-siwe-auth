@@ -47,8 +47,7 @@ module OmniAuth
         eth_signature = request.params['eth_signature']
         siwe_message = ::Siwe::Message.from_message(eth_message)
 
-        domain = Discourse.base_url
-        domain.slice!("#{Discourse.base_protocol}://")
+        domain = Discourse.base_url.delete_prefix("#{Discourse.base_protocol}://")
         if siwe_message.domain != domain
           return fail!("Invalid domain")
         end
