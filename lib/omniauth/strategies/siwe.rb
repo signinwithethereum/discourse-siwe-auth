@@ -135,7 +135,7 @@ module OmniAuth
 
         # Hash the message the same way personal_sign does (EIP-191)
         prefixed = Eth::Signature.prefix_message(siwe_message.prepare_message)
-        message_hash = Eth::Util.remove_hex_prefix(Eth::Util.bin_to_hex(Eth::Util.keccak256(prefixed)))
+        message_hash = Eth::Util.bin_to_hex(Eth::Util.keccak256(prefixed))
 
         # ABI-encode constructor args: (address signer, bytes32 hash, bytes signature)
         address_param = Eth::Util.remove_hex_prefix(siwe_message.address).downcase.rjust(64, '0')
