@@ -2,7 +2,7 @@
 
 # name: discourse-siwe-auth
 # about: Authenticate users via the Sign In with Ethereum (SIWE) standard
-# version: 1.1.0
+# version: 1.2.0
 # authors: EthID
 # url: https://siwe.xyz
 
