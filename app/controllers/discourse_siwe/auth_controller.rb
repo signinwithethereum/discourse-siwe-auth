@@ -22,10 +22,11 @@ module DiscourseSiwe
         return render json: { error: "Invalid chain ID" }, status: 400
       end
 
+      now = Time.now.utc
       domain = Discourse.base_url.delete_prefix("#{Discourse.base_protocol}://")
       message = Siwe::Message.new(domain, eth_account, Discourse.base_url, "1", {
-        issued_at: Time.now.utc.iso8601,
-        expiration_time: (Time.now.utc + 300).iso8601,
+        issued_at: now.iso8601,
+        expiration_time: (now + 300).iso8601,
         statement: SiteSetting.siwe_statement,
         nonce: Siwe::Util.generate_nonce,
         chain_id: chain_id,

@@ -12,7 +12,7 @@
 require 'net/http'
 require 'json'
 
-$LOAD_PATH.unshift(*Dir[File.join(__dir__, '..', 'gems/3.4.8/gems/keccak-*/lib')])
+$LOAD_PATH.unshift(*Dir[File.join(__dir__, '..', 'gems/*/gems/keccak-*/lib')])
 require 'digest/keccak'
 
 RPC_URL = ENV.fetch('RPC_URL', 'https://ethereum-rpc.publicnode.com')

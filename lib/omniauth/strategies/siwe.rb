@@ -6,9 +6,6 @@ module OmniAuth
     class Siwe
       include OmniAuth::Strategy
 
-      # EIP-1271 magic value returned by isValidSignature
-      EIP1271_MAGIC_VALUE = "1626ba7e"
-
       # ENS Registry contract address (same on all networks)
       ENS_REGISTRY = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
 
