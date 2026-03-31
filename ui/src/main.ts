@@ -2,12 +2,8 @@ import { createApp, h } from 'vue'
 import { VueQueryPlugin } from '@tanstack/vue-query'
 import { WagmiPlugin } from '@wagmi/vue'
 import globalStyles from '@1001-digital/styles?inline'
-import {
-  Globals,
-  EvmConfigKey,
-  defaultIconAliases,
-  IconAliasesKey,
-} from '@1001-digital/components'
+import { Globals, defaultIconAliases, IconAliasesKey } from '@1001-digital/components'
+import { EvmConfigKey } from '@1001-digital/components.evm'
 import SiweAuth from './SiweAuth.vue'
 import { createWagmiConfig } from './wagmi'
 import { createShadowRoot, injectStyles, captureDevStyles, getHostCSSOverrides } from './shadow'

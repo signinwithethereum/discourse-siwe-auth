@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useConnection, useDisconnect, useSignMessage } from '@wagmi/vue'
-import {
-  Button,
-  EvmAccount,
-  EvmConnect,
-  Loading,
-} from '@1001-digital/components'
+import { Button, Loading } from '@1001-digital/components'
+import { EvmAccount, EvmConnect } from '@1001-digital/components.evm'
 
 const props = defineProps<{
   messageUrl: string

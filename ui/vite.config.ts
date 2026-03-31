@@ -63,7 +63,7 @@ export default defineConfig({
     dedupe: ['vue', '@wagmi/core', '@wagmi/vue'],
   },
   optimizeDeps: {
-    exclude: ['@1001-digital/components'],
+    exclude: ['@1001-digital/components', '@1001-digital/components.evm'],
     include: [
       '@metamask/sdk',
       'eventemitter3',
