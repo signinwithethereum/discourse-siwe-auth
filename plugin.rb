@@ -10,10 +10,6 @@ enabled_site_setting :discourse_siwe_enabled
 register_svg_icon 'fab-ethereum'
 register_asset 'stylesheets/discourse-siwe-auth.scss'
 
-%w[
-  ../lib/omniauth/strategies/siwe.rb
-].each { |path| load File.expand_path(path, __FILE__) }
-
 gem 'pkg-config', '1.5.0', require: false
 gem 'forwardable', '1.3.3', require: false
 gem 'keccak', '1.3.3', require: false
@@ -26,6 +22,12 @@ gem 'ffi-compiler', '1.0.1', require: false
 gem 'scrypt', '3.0.7', require: false
 gem 'eth', '0.5.11', require: false
 gem 'siwe-rb', '0.1.2', require: false
+
+# Load after gem declarations — the strategy file requires 'siwe', which only
+# resolves once siwe-rb has been activated above.
+%w[
+  ../lib/omniauth/strategies/siwe.rb
+].each { |path| load File.expand_path(path, __FILE__) }
 
 class ::SiweAuthenticator < ::Auth::ManagedAuthenticator
   def name
