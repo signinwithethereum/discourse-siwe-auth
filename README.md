@@ -25,15 +25,11 @@ Add the plugin's repository URL to the `after_code` hook:
 hooks:
   after_code:
     - exec:
-      cd: $home/plugins
-      cmd:
-        - sudo -E -u discourse git clone https://github.com/discourse/docker_manager.git
-        - sudo -E -u discourse git clone https://github.com/signinwithethereum/discourse-siwe-auth.git # <-- added
+        cd: $home/plugins
+        cmd:
+          - sudo -E -u discourse git clone https://github.com/discourse/docker_manager.git
+          - sudo -E -u discourse git clone https://github.com/signinwithethereum/discourse-siwe-auth.git # <-- added
 ```
-
-Follow the existing format of the `docker_manager.git` line; if it does not
-contain `sudo -E -u discourse` then use
-`git clone https://github.com/signinwithethereum/discourse-siwe-auth.git` instead.
 
 Rebuild the container:
 
@@ -59,12 +55,12 @@ WalletConnect / Reown project ID. Without a project ID, only injected wallets
 
 ### Settings
 
-| Setting | Description |
-| --- | --- |
-| **Discourse siwe enabled** | Enable or disable Sign-In with Ethereum authentication. |
-| **Siwe ethereum rpc url** | _Optional._ An Ethereum JSON-RPC endpoint used for ENS name/avatar resolution and EIP-1271 signature verification (required for smart contract wallets like SAFE). A dedicated provider (Alchemy, Infura) is recommended. Example: `https://mainnet.infura.io/v3/YOUR_KEY`. |
-| **Siwe project ID** | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [dashboard.reown.com](https://dashboard.reown.com). |
-| **Siwe statement** | The human-readable statement shown in the SIWE message. Defaults to "Sign in with Ethereum". |
+| Setting                    | Description                                                                                                                                                                                                                                                                 |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Discourse siwe enabled** | Enable or disable Sign-In with Ethereum authentication.                                                                                                                                                                                                                     |
+| **Siwe ethereum rpc url**  | _Optional._ An Ethereum JSON-RPC endpoint used for ENS name/avatar resolution and EIP-1271 signature verification (required for smart contract wallets like SAFE). A dedicated provider (Alchemy, Infura) is recommended. Example: `https://mainnet.infura.io/v3/YOUR_KEY`. |
+| **Siwe project ID**        | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [dashboard.reown.com](https://dashboard.reown.com).                                            |
+| **Siwe statement**         | The human-readable statement shown in the SIWE message. Defaults to "Sign in with Ethereum".                                                                                                                                                                                |
 
 ## Tests
 
