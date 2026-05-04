@@ -8,22 +8,22 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@1001-digital/components": "^2.4.5",
-    "@1001-digital/components.evm": "^2.7.0",
-    "@1001-digital/styles": "^2.3.3",
-    "@tanstack/vue-query": "^5.0.0",
-    "@vueuse/core": "^14.2.0",
-    "@wagmi/connectors": "^5.0.0",
-    "@wagmi/core": "^3.0.0",
-    "@wagmi/vue": "^0.5.0",
-    "viem": "^2.0.0",
-    "vue": "^3.5.0"
+    "@1001-digital/components": "^2.8.1",
+    "@1001-digital/components.evm": "^3.5.3",
+    "@1001-digital/styles": "^2.6.0",
+    "@tanstack/vue-query": "^5.100.9",
+    "@vueuse/core": "^14.3.0",
+    "@wagmi/connectors": "^8.0.9",
+    "@wagmi/core": "^3.4.8",
+    "@wagmi/vue": "^0.5.11",
+    "viem": "^2.48.8",
+    "vue": "^3.5.33"
   },
   "devDependencies": {
     "@types/luxon": "^3.7.1",
-    "@vitejs/plugin-vue": "^5.0.0",
-    "typescript": "^5.8.0",
-    "vite": "^6.0.0",
-    "vue-tsc": "^2.2.0"
+    "@vitejs/plugin-vue": "^6.0.6",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vue-tsc": "^3.2.8"
   }
 }
