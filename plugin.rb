@@ -2,7 +2,7 @@
 
 # name: discourse-siwe-auth
 # about: Authenticate users via the Sign In with Ethereum (SIWE) standard
-# version: 1.2.1
+# version: 1.2.2
 # authors: EthID
 # url: https://siwe.xyz
 
@@ -16,13 +16,12 @@ register_asset 'stylesheets/discourse-siwe-auth.scss'
 
 gem 'pkg-config', '1.5.0', require: false
 gem 'forwardable', '1.3.3', require: false
-gem 'mkmfmf', '0.4', require: false
 gem 'keccak', '1.3.3', require: false
-gem 'zip', '2.0.2', require: false
-gem 'mini_portile2', '2.8.0', require: false
+gem 'rubyzip', '2.4.1', require: false
+gem 'mini_portile2', '2.8.9', require: false
 gem 'rbsecp256k1', '6.0.0', require: false
 gem 'konstructor', '1.0.2', require: false
-gem 'ffi', '1.17.2', require: false
+gem 'ffi', '1.17.4', require: false
 gem 'ffi-compiler', '1.0.1', require: false
 gem 'scrypt', '3.0.7', require: false
 gem 'eth', '0.5.11', require: false
