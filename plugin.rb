@@ -2,7 +2,7 @@
 
 # name: discourse-siwe-auth
 # about: Authenticate users via the Sign In with Ethereum (SIWE) standard
-# version: 1.2.2
+# version: 1.3.0
 # authors: EthID
 # url: https://siwe.xyz
 
@@ -25,7 +25,7 @@ gem 'ffi', '1.17.4', require: false
 gem 'ffi-compiler', '1.0.1', require: false
 gem 'scrypt', '3.0.7', require: false
 gem 'eth', '0.5.11', require: false
-gem 'siwe', '1.1.2', require: false
+gem 'siwe-rb', '0.1.2', require: false
 
 class ::SiweAuthenticator < ::Auth::ManagedAuthenticator
   def name

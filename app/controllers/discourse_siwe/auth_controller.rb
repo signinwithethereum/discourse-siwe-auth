@@ -24,13 +24,17 @@ module DiscourseSiwe
 
       now = Time.now.utc
       domain = Discourse.base_url.delete_prefix("#{Discourse.base_protocol}://")
-      message = Siwe::Message.new(domain, eth_account, Discourse.base_url, "1", {
+      message = Siwe::Message.new(
+        domain: domain,
+        address: eth_account,
+        uri: Discourse.base_url,
+        version: "1",
+        chain_id: chain_id.to_i,
+        nonce: Siwe.generate_nonce,
         issued_at: now.iso8601,
         expiration_time: (now + 300).iso8601,
-        statement: SiteSetting.siwe_statement,
-        nonce: Siwe::Util.generate_nonce,
-        chain_id: chain_id,
-      })
+        statement: SiteSetting.siwe_statement
+      )
       session[:nonce] = message.nonce
 
       render json: { message: message.prepare_message }
