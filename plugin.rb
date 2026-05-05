@@ -10,10 +10,8 @@ enabled_site_setting :discourse_siwe_enabled
 register_svg_icon 'fab-ethereum'
 register_asset 'stylesheets/discourse-siwe-auth.scss'
 
-gem 'pkg-config', '1.5.0', require: false
 gem 'forwardable', '1.3.3', require: false
 gem 'keccak', '1.3.3', require: false
-gem 'mini_portile2', '2.8.9', require: false
 gem 'rbsecp256k1', '6.0.0', require: false
 gem 'konstructor', '1.0.2', require: false
 gem 'ffi', '1.17.4', require: false
