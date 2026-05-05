@@ -13,7 +13,6 @@ register_asset 'stylesheets/discourse-siwe-auth.scss'
 gem 'pkg-config', '1.5.0', require: false
 gem 'forwardable', '1.3.3', require: false
 gem 'keccak', '1.3.3', require: false
-gem 'rubyzip', '2.4.1', require: false
 gem 'mini_portile2', '2.8.9', require: false
 gem 'rbsecp256k1', '6.0.0', require: false
 gem 'konstructor', '1.0.2', require: false
