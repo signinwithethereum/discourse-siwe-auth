@@ -3,12 +3,13 @@
 #
 # Run: ruby test/ens_unit_test.rb
 
-$LOAD_PATH.unshift(*Dir[File.join(__dir__, '..', 'gems/3.4.8/gems/keccak-*/lib')])
+require_relative 'test_helper'
+PluginTestGems.activate('keccak', '1.3.3')
 require 'digest/keccak'
 require 'minitest/autorun'
 
 # Standalone reimplementations of the functions under test,
-# using Digest::Keccak directly (avoids the native rbsecp256k1 dep).
+# using Digest::Keccak directly.
 module EnsHelpers
   module_function
 
@@ -153,4 +154,3 @@ class AbiDecodeStringTest < Minitest::Test
     assert_equal url, EnsHelpers.abi_decode_string(hex)
   end
 end
-

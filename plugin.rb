@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 # name: discourse-siwe-auth
-# about: Authenticate users via the Sign In with Ethereum (SIWE) standard
-# version: 1.3.2
+# about: Authenticate users via the Sign in with Ethereum (SIWE) standard
+# version: 1.3.3
 # authors: EthID
 # url: https://siwe.xyz
 
@@ -10,18 +10,12 @@ enabled_site_setting :discourse_siwe_enabled
 register_svg_icon 'fab-ethereum'
 register_asset 'stylesheets/discourse-siwe-auth.scss'
 
-gem 'forwardable', '1.3.3', require: false
+# Discourse installs plugin gems with --ignore-dependencies. Declare keccak
+# first so siwe-rb can activate its sole external runtime dependency.
 gem 'keccak', '1.3.3', require: false
-gem 'rbsecp256k1', '6.0.0', require: false
-gem 'konstructor', '1.0.2', require: false
-gem 'ffi', '1.17.4', require: false
-gem 'ffi-compiler', '1.0.1', require: false
-gem 'scrypt', '3.0.7', require: false
-gem 'eth', '0.5.11', require: false
-gem 'siwe-rb', '0.1.2', require: false
+gem 'siwe-rb', '0.3.0', require: false
 
-# Load after gem declarations — the strategy file requires 'siwe', which only
-# resolves once siwe-rb has been activated above.
+# Load after the gem declarations so require 'siwe' resolves.
 %w[
   ../lib/omniauth/strategies/siwe.rb
 ].each { |path| load File.expand_path(path, __FILE__) }

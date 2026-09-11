@@ -1,4 +1,5 @@
 require 'siwe'
+require 'digest/keccak'
 
 module OmniAuth
   module Strategies
@@ -90,11 +91,11 @@ module OmniAuth
         node = "\x00" * 32
         unless name.nil? || name.empty?
           name.split('.').reverse.each do |label|
-            label_hash = Eth::Util.keccak256(label)
-            node = Eth::Util.keccak256(node + label_hash)
+            label_hash = Digest::Keccak.new(256).digest(label)
+            node = Digest::Keccak.new(256).digest(node + label_hash)
           end
         end
-        Eth::Util.bin_to_hex(node)
+        node.unpack1('H*')
       end
 
       # Decode an ABI-encoded address return value
@@ -125,7 +126,7 @@ module OmniAuth
         client = ::Siwe::Rpc::HttpClient.new(url)
 
         # Step 1: Reverse resolve address → name
-        addr_clean = Eth::Util.remove_hex_prefix(address).downcase
+        addr_clean = address.delete_prefix('0x').downcase
         reverse_node = ens_namehash("#{addr_clean}.addr.reverse")
 
         resolver_hex = eth_call(ENS_REGISTRY, "0x0178b8bf#{reverse_node}", client: client)

@@ -1,7 +1,7 @@
-# Sign-In with Ethereum for Discourse
+# Sign in with Ethereum for Discourse
 
 A Discourse plugin that lets users authenticate with their Ethereum wallet using
-the [Sign-In with Ethereum (SIWE)](https://login.xyz) standard. Injected wallets
+the [Sign in with Ethereum (SIWE)](https://login.xyz) standard. Injected wallets
 (MetaMask, Safe, etc.) work out of the box. ENS names and avatars are resolved
 server-side when an RPC endpoint is configured.
 
@@ -57,35 +57,34 @@ WalletConnect / Reown project ID. Without a project ID, only injected wallets
 
 | Setting                    | Description                                                                                                                                                                                                                                                                 |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discourse siwe enabled** | Enable or disable Sign-In with Ethereum authentication.                                                                                                                                                                                                                     |
+| **Discourse siwe enabled** | Enable or disable Sign in with Ethereum authentication.                                                                                                                                                                                                                     |
 | **Siwe ethereum rpc url**  | _Optional._ An Ethereum JSON-RPC endpoint used for ENS name/avatar resolution and EIP-1271 signature verification (required for smart contract wallets like SAFE). A dedicated provider (Alchemy, Infura) is recommended. Example: `https://mainnet.infura.io/v3/YOUR_KEY`. |
 | **Siwe project ID**        | _Optional._ A WalletConnect / Reown project ID. Without it, only injected wallets (MetaMask, Safe, etc.) are available. To enable WalletConnect, create a free project ID at [dashboard.reown.com](https://dashboard.reown.com).                                            |
 | **Siwe statement**         | The human-readable statement shown in the SIWE message. Defaults to "Sign in with Ethereum".                                                                                                                                                                                |
 
 ## Tests
 
-The plugin includes unit and integration tests for ENS resolution helpers and
-EIP-6492 smart wallet signature verification.
+The plugin includes unit tests for ENS resolution and SIWE signature
+verification, plus an ENS integration test.
 
 ### Unit tests (no network needed)
 
 ```bash
 ruby test/ens_unit_test.rb
-ruby test/smart_wallet_unit_test.rb
+ruby test/siwe_unit_test.rb
 ```
 
 ### Integration tests (require an Ethereum RPC endpoint)
 
 ```bash
 ruby test/ens_integration_test.rb
-ruby test/smart_wallet_integration_test.rb
 ```
 
 By default, integration tests use a public RPC. Set `RPC_URL` for a dedicated
 provider:
 
 ```bash
-RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY ruby test/smart_wallet_integration_test.rb
+RPC_URL=https://eth-mainnet.g.alchemy.com/v2/YOUR_KEY ruby test/ens_integration_test.rb
 ```
 
 ### Run all tests
