@@ -5,24 +5,28 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@1001-digital/components": "^2.8.1",
-    "@1001-digital/components.evm": "^3.5.3",
-    "@1001-digital/styles": "^2.6.0",
-    "@tanstack/vue-query": "^5.100.9",
-    "@vueuse/core": "^14.3.0",
-    "@wagmi/connectors": "^8.0.9",
-    "@wagmi/core": "^3.4.8",
-    "@wagmi/vue": "^0.5.11",
-    "viem": "^2.48.8",
-    "vue": "^3.5.33"
+    "@1001-digital/components": "^2.11.1",
+    "@1001-digital/components.evm": "^4.2.1",
+    "@1001-digital/styles": "^2.8.1",
+    "@metamask/connect-evm": "~0.9.0",
+    "@safe-global/safe-apps-provider": "~0.18.6",
+    "@safe-global/safe-apps-sdk": "^9.1.0",
+    "@tanstack/vue-query": "5.95.2",
+    "@vueuse/core": "^14.4.0",
+    "@wagmi/core": "3.4.6",
+    "@wagmi/vue": "0.5.6",
+    "@walletconnect/ethereum-provider": "~2.23.9",
+    "viem": "2.48.4",
+    "vue": "^3.5.41"
   },
   "devDependencies": {
     "@types/luxon": "^3.7.1",
     "@vitejs/plugin-vue": "^6.0.6",
-    "typescript": "^6.0.3",
+    "typescript": "~5.9.3",
     "vite": "^8.0.10",
     "vue-tsc": "^3.2.8"
   }

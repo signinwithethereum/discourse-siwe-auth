@@ -1,0 +1,26 @@
+diff --git a/src/apg-lib/ast.js b/src/apg-lib/ast.js
+index a311ab03f2337898802bca305bc0dea44bcecdfa..8578dff36172304cea6f434b6200ac01326e461d 100644
+--- a/src/apg-lib/ast.js
++++ b/src/apg-lib/ast.js
+@@ -67,7 +67,7 @@ module.exports = function exportsAst() {
+       nodesDefined[i] = false;
+       nodeCallbacks[i] = null;
+     }
+-    for (const index in that.callbacks) {
++    for (const index of Object.keys(that.callbacks)) {
+       const lower = index.toLowerCase();
+       i = list.indexOf(lower);
+       if (i < 0) {
+diff --git a/src/apg-lib/parser.js b/src/apg-lib/parser.js
+index 2b930d774594da57f4a195a016333eca2c3f93cb..244f7b1065b21f0f488394caefdac46d82fe9710 100644
+--- a/src/apg-lib/parser.js
++++ b/src/apg-lib/parser.js
+@@ -372,7 +372,7 @@ module.exports = function parser() {
+     for (i = 0; i < udts.length; i += 1) {
+       list.push(udts[i].lower);
+     }
+-    for (const index in thisThis.callbacks) {
++    for (const index of Object.keys(thisThis.callbacks)) {
+       i = list.indexOf(index.toLowerCase());
+       if (i < 0) {
+         throw new Error(`${functionName}syntax callback '${index}' not a rule or udt name`);

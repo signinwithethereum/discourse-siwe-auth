@@ -64,7 +64,7 @@ export function mountSiwe(el: string | HTMLElement, options: SiweOptions) {
   app.use(WagmiPlugin, { config: wagmiConfig })
 
   app.provide(EvmConfigKey, {
-    title: 'Sign-in with Ethereum',
+    title: 'Sign in with Ethereum',
     defaultChain: 'mainnet',
     chains: { mainnet: { id: 1, blockExplorer: 'https://etherscan.io' } },
     walletConnectProjectId: options.walletConnectProjectId,

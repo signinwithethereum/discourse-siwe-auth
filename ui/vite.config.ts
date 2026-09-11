@@ -39,8 +39,26 @@ function cssToShadow(): Plugin {
   }
 }
 
+// Vite otherwise emits runtime throwing stubs for missing optional peers.
+// Wallet SDKs are optional to wagmi, but required by our enabled connectors.
+function requireBundledPeers(): Plugin {
+  return {
+    name: 'require-bundled-peers',
+    generateBundle(_options, bundle) {
+      for (const output of Object.values(bundle)) {
+        if (output.type !== 'chunk') continue
+        for (const [id, module] of Object.entries(output.modules)) {
+          if (id.includes('__vite-optional-peer-dep') && module.renderedLength > 0) {
+            this.error(`Missing wallet dependency in bundle: ${id}`)
+          }
+        }
+      }
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [vue(), cssToShadow()],
+  plugins: [vue(), requireBundledPeers(), cssToShadow()],
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
   },
@@ -60,12 +78,12 @@ export default defineConfig({
     },
   },
   resolve: {
-    dedupe: ['vue', '@wagmi/core', '@wagmi/vue'],
+    dedupe: ['vue', '@wagmi/core', '@wagmi/vue', '@1001-digital/components.evm', 'eventemitter3'],
   },
   optimizeDeps: {
     exclude: ['@1001-digital/components', '@1001-digital/components.evm'],
     include: [
-      '@metamask/sdk',
+      '@metamask/connect-evm',
       'eventemitter3',
       'qrcode',
       '@walletconnect/ethereum-provider',

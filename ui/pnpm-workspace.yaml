@@ -1,0 +1,2 @@
+patchedDependencies:
+  apg-js@4.4.0: patches/apg-js@4.4.0.patch

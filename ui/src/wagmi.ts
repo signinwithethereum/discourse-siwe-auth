@@ -1,6 +1,6 @@
 import { http, createConfig, type CreateConnectorFn } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
-import { injected, metaMask, safe, walletConnect } from '@wagmi/connectors'
+import { injected, metaMask, safe, walletConnect } from '@wagmi/vue/connectors'
 
 export interface WagmiOptions {
   walletConnectProjectId?: string
@@ -15,10 +15,13 @@ export function createWagmiConfig(options: WagmiOptions) {
 
   const connectors: CreateConnectorFn[] = [
     injected(),
-    safe(),
+    safe({ allowedDomains: [/app\.safe\.global$/] }),
     metaMask({
-      headless: true,
-      dappMetadata: { name: 'Sign-in with Ethereum', iconUrl: '', url: '' },
+      ui: { headless: true },
+      dapp: {
+        name: 'Sign in with Ethereum',
+        url: window.location.origin,
+      },
     }),
   ]
 
